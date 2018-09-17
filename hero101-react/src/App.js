@@ -10,9 +10,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Hero 101</h1>
         </header>
-        <p className="App-intro">
+        {/* <p className="App-intro">
           A guide on how to be a superhero.
-        </p>
+        </p> */}
       </div>
     );
   }

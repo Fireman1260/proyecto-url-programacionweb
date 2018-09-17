@@ -1,9 +1,10 @@
 {
-  "name": "hero101",
+  "name": "hero101-react",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "react": "^16.5.1",
+    "react-bootstrap": "^0.32.4",
     "react-dom": "^16.5.1",
     "react-scripts": "1.1.5"
   },

@@ -4,9 +4,11 @@ import {Route, Switch} from 'react-router-dom';
 
 //Components
 import App from './components/App';
+import P404 from './components/404-Page'
 import Create from './components/Create';
 import Edit from './components/Edit';
 import Home from './components/Home'
+
 
 const AppRoutes = () =>
     <App>
@@ -14,6 +16,7 @@ const AppRoutes = () =>
             <Route exact path="/Create" component={Create} />
             <Route exact path="/Edit" component={Edit} />
             <Route exact path="/" component={Home} />
+            <Route component={P404} />
         </Switch>
     </App>
 

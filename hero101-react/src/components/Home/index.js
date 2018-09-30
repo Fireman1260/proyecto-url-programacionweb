@@ -9,8 +9,8 @@ import {
     CarouselCaption,
     Jumbotron,
     Container,
-    Row,
-    Col
+    Badge,
+    Button
   } from 'reactstrap';
 
 class Home  extends Component{
@@ -19,12 +19,12 @@ class Home  extends Component{
         this.state = {
             heroList: [], 
             activeIndex:0,
-            activeId:1,
+            id: 0,
             name: "",
             hero_type: "",
             alter_ego: "",
             species: "",
-            abilities: []
+            linkEdit: ""
         };
         this.next = this.next.bind(this);
         this.previous = this.previous.bind(this);
@@ -41,25 +41,36 @@ class Home  extends Component{
         }
         else{
             localStorage.setItem("Heroes",JSON.stringify([
-                {id: 1, name: "Spiderman", hero_type: "hero", alter_ego: "Peter Parker", species:"Human Mutate", abilities: ["Genius", "Superhuman strength", "Speed", "Durability", "Agility"], src:require('./img/spidey.jpg')},
-                {id: 2, name: "Deadpool", hero_type: "anti-hero", alter_ego: "Wade Wilson", species:"Human Mutate", abilities: ["Healing Factor", "Marksman", "Swordsman", "Hand-to-hand Combat", "Teleportation"], src:require('./img/Deadpool.jpg')},
-                {id: 3, name: "Red Hood", hero_type: "anti-hero", alter_ego: "Jason Todd", species:"Human", abilities: ["Marksman", "Martial Artist", "Hand-to-hand Combat", "High-tech equipment", "Enhanced strength"], src:require('./img/RedHood.jpg')},
-                {id: 4, name: "Batman", hero_type: "hero", alter_ego: "Bruce Wayne", species:"Human", abilities: ["Genius", "Superhuman strength", "Martial Artist", "Hand-to-hand Combat", "Expert detective"], src:require('./img/batman.jpg')},
-                {id: 5, name: "Flash", hero_type: "hero", alter_ego: "Barry Allen", species:"Metahuman", abilities: ["Immense superhuman speed", "Agility", "Stamina", "Electrokinesis", "Body vibration"], src:require('./img/Flash.jpg')},
-                {id: 6, name: "Superman", hero_type: "hero", alter_ego: "Clark Kent", species:"Kryptonian", abilities: ["Superhuman strength", "Superhuman speed", "Superhuman vision", "Superhuman breath ", "Invulnerability", "Flight"], src:require('./img/Superman.jpg')},
-                {id: 7, name: "Wonder Woman", hero_type: "hero", alter_ego: "Diana Prince", species:"Amazonian-Olympian", abilities: ["Superhuman strength", "Superhuman speed", "Reflexes", "Master Hand-to-Hand Combat", "Flight"], src:require('./img/wonderwoman.jpg')},
-                {id: 8, name: "Super Girl", hero_type: "hero", alter_ego: "Linda Danvers", species:"Kryptonian", abilities: ["Superhuman strength", "Superhuman speed", "Superhuman vision", "Superhuman breath ", "Invulnerability", "Flight"], src:require('./img/supergirl.jpg')},
-                {id: 9, name: "Green Lantern (Jessica Cruz)", hero_type: "hero", alter_ego: "Jessica Cruz", species:"Human", abilities: ["Flight", "Force field", "Generation of hard-light constructs", "Real-time translation of all-languages", "Space travel"], src:require('./img/GreenLantern.jpg')}
+                {id: 1, name: "Spiderman", hero_type: "hero", alter_ego: "Peter Parker", species:"Human Mutate", src:require('./img/spidey.jpg')},
+                {id: 2, name: "Deadpool", hero_type: "anti-hero", alter_ego: "Wade Wilson", species:"Human Mutate", src:require('./img/Deadpool.jpg')},
+                {id: 3, name: "Red Hood", hero_type: "anti-hero", alter_ego: "Jason Todd", species:"Human", src:require('./img/RedHood.jpg')},
+                {id: 4, name: "Batman", hero_type: "hero", alter_ego: "Bruce Wayne", species:"Human", src:require('./img/batman.jpg')},
+                {id: 5, name: "Flash", hero_type: "hero", alter_ego: "Barry Allen", species:"Metahuman", src:require('./img/Flash.jpg')},
+                {id: 6, name: "Superman", hero_type: "hero", alter_ego: "Clark Kent", species:"Kryptonian", src:require('./img/Superman.jpg')},
+                {id: 7, name: "Wonder Woman", hero_type: "hero", alter_ego: "Diana Prince", species:"Amazonian-Olympian", src:require('./img/wonderwoman.jpg')},
+                {id: 8, name: "Super Girl", hero_type: "hero", alter_ego: "Linda Danvers", species:"Kryptonian", src:require('./img/supergirl.jpg')},
+                {id: 9, name: "Green Lantern (Jessica Cruz)", hero_type: "hero", alter_ego: "Jessica Cruz", species:"Human", src:require('./img/GreenLantern.jpg')}
             ]));
 
             heroes = JSON.parse(localStorage.getItem("Heroes"));
         }
 
-        this.setState({heroList: heroes});
+        this.setState({ heroList: heroes,
+                        id: heroes[0]['id'],
+                        name: heroes[0]['name'],
+                        hero_type: heroes[0]['hero_type'],
+                        alter_ego: heroes[0]['alter_ego'],
+                        species: heroes[0]['species']});
       }
 
       onExiting() {
+        
         this.animating = true;
+        this.setState({ id: this.state.heroList[this.state.activeIndex]['id'],
+                        name: this.state.heroList[this.state.activeIndex]['name'],
+                        hero_type: this.state.heroList[this.state.activeIndex]['hero_type'],
+                        alter_ego: this.state.heroList[this.state.activeIndex]['alter_ego'],
+                        species: this.state.heroList[this.state.activeIndex]['species']});
       }
     
       onExited() {
@@ -83,11 +94,15 @@ class Home  extends Component{
         this.setState({ activeIndex: newIndex });
       }
 
+      goToEdit(){
+          console.log(this.state)
+      }
+
     render(){
         const {activeIndex} = this.state;
         const Heroes = this.state.heroList;
-        
-        
+        const EditLink = "/Edit?id=" +  this.state.id
+
         const slides = Heroes.map((hero) => {
             return( 
                 <CarouselItem value={hero.id}  onExiting={this.onExiting} onExited={this.onExited} key={hero.id}>
@@ -97,38 +112,34 @@ class Home  extends Component{
             );
         });
 
-        if(Heroes[activeIndex] !== undefined){
-           this.state.name = Heroes[activeIndex]['name']
-           this.state.hero_type = Heroes[activeIndex]['hero_type']
-           this.state.alter_ego = Heroes[activeIndex]['alter_ego']
-           this.state.species = Heroes[activeIndex]['species']
-           this.state.abilities = Heroes[activeIndex]['abilities']
- 
-        }
-            
-
         return (
+            
             <div>
-
                 <Carousel activeIndex={activeIndex} next={this.next} previous={this.previous}>
                     <CarouselIndicators items={Heroes} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
                     {slides}
                     <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
                     <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
-                </Carousel>             
+                </Carousel> 
                 <Container>
-                    <Row>
-                        <Col md={{size: 12}}>
-                            <Jumbotron>
+                    <Jumbotron>
+                            <div className="btn_align">
+                                <Button color="info" href={EditLink}>Editar Heroe</Button>
+                                &#32;
+                                &#32;
+                                <Button color="danger"> Eliminar Heroe</Button>
+                            </div>
+                            <br></br>
+                            <br></br>
                             <h3 className="display-3">{this.state.name} <span className="italic-display ">&#123; {this.state.hero_type} &#125;</span></h3>
-                            <h1 className="display-5">{this.state.alter_ego}</h1>
-
-                                {this.state.species}
-                                {this.state.abilities}
-                            </Jumbotron>
-                        </Col>
-                    </Row>
+                            <br></br>
+                            <h1 className="display-4">{this.state.alter_ego}</h1>
+                            <h5 ><Badge>{this.state.species}</Badge></h5>
+                            <br></br>
+                    </Jumbotron>  
                 </Container>
+                       
+                
 
             </div>
             

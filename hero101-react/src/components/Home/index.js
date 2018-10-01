@@ -1,24 +1,15 @@
 import React, {Component} from 'react';
 import './index.css'
 
-import {
-    Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators,
-    CarouselCaption,
-    Jumbotron,
-    Container,
-    Badge,
-    Button
-  } from 'reactstrap';
+import {Button} from 'reactstrap';
+
+
 
 class Home  extends Component{
     constructor(props){
         super(props);
         this.state = {
             heroList: [], 
-            activeIndex:0,
             id: 0,
             name: "",
             hero_type: "",
@@ -26,11 +17,7 @@ class Home  extends Component{
             species: "",
             linkEdit: ""
         };
-        this.next = this.next.bind(this);
-        this.previous = this.previous.bind(this);
-        this.goToIndex = this.goToIndex.bind(this);
-        this.onExiting = this.onExiting.bind(this);
-        this.onExited = this.onExited.bind(this);
+
     }
 
     componentDidMount() {
@@ -54,93 +41,54 @@ class Home  extends Component{
 
             heroes = JSON.parse(localStorage.getItem("Heroes"));
         }
-
-        this.setState({ heroList: heroes,
-                        id: heroes[0]['id'],
-                        name: heroes[0]['name'],
-                        hero_type: heroes[0]['hero_type'],
-                        alter_ego: heroes[0]['alter_ego'],
-                        species: heroes[0]['species']});
+        this.setState({ heroList: heroes });         
       }
 
-      onExiting() {
-        
-        this.animating = true;
-        this.setState({ id: this.state.heroList[this.state.activeIndex]['id'],
-                        name: this.state.heroList[this.state.activeIndex]['name'],
-                        hero_type: this.state.heroList[this.state.activeIndex]['hero_type'],
-                        alter_ego: this.state.heroList[this.state.activeIndex]['alter_ego'],
-                        species: this.state.heroList[this.state.activeIndex]['species']});
-      }
-    
-      onExited() {
-        this.animating = false;
-      }
-    
-      next() {
-        if (this.animating) return;
-        const nextIndex = this.state.activeIndex === this.state.heroList.length - 1 ? 0 : this.state.activeIndex + 1;
-        this.setState({ activeIndex: nextIndex });
-      }
-    
-      previous() {
-        if (this.animating) return;
-        const nextIndex = this.state.activeIndex === 0 ? this.state.heroList.length - 1 : this.state.activeIndex - 1;
-        this.setState({ activeIndex: nextIndex });
-      }
-    
-      goToIndex(newIndex) {
-        if (this.animating) return;
-        this.setState({ activeIndex: newIndex });
-      }
-
-      goToEdit(){
-          console.log(this.state)
-      }
 
     render(){
-        const {activeIndex} = this.state;
         const Heroes = this.state.heroList;
-        const EditLink = "/Edit?id=" +  this.state.id
 
-        const slides = Heroes.map((hero) => {
-            return( 
-                <CarouselItem value={hero.id}  onExiting={this.onExiting} onExited={this.onExited} key={hero.id}>
-                    <img src={hero.src} alt={hero.alter_ego} /> 
-                    <CarouselCaption captionText={hero.alter_ego} captionHeader={hero.name} />
-                </CarouselItem>
-            );
-        });
+        const heroes = Heroes.map((hero) => {
+            var edit = "/Edit?id=" + hero.id;
+            var eliminar = "/Delete?id=" + hero.id;
+            
+            return(
+                <div className="col-md-6">
+                    <div className="card mt-5">
+                        <div className="card-header">
+                            <h3>{hero.name}</h3>
+                            <h4>
+                                <spam className="badge badge-pill badge-danger ml-2">
+                                    {hero.hero_type}
+                                </spam>
+                            </h4>
+                        </div>
+                        <div className = "card-body">
+                            <img src={hero.src}/>
+                        </div>
+                        <div className = "card-footer">
+                            <h2>{hero.alter_ego}</h2>
+                            
+                            <spam className="badge badge-pill badge-primary ml-2">
+                                {hero.species}
+                            </spam>
+                            <br></br>
+                            <br></br>
+                            <Button color="primary" href={edit}>Editar</Button ><Button color="danger" href={eliminar}>Eliminar</Button>
+                        </div>
+                    </div>
+                </div>
+            )
+        })
 
         return (
             
-            <div>
-                <Carousel activeIndex={activeIndex} next={this.next} previous={this.previous}>
-                    <CarouselIndicators items={Heroes} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
-                    {slides}
-                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
-                    <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
-                </Carousel> 
-                <Container>
-                    <Jumbotron>
-                            <div className="btn_align">
-                                <Button color="info" href={EditLink}>Editar Heroe</Button>
-                                &#32;
-                                &#32;
-                                <Button color="danger"> Eliminar Heroe</Button>
-                            </div>
-                            <br></br>
-                            <br></br>
-                            <h3 className="display-3">{this.state.name} <span className="italic-display ">&#123; {this.state.hero_type} &#125;</span></h3>
-                            <br></br>
-                            <h1 className="display-4">{this.state.alter_ego}</h1>
-                            <h5 ><Badge>{this.state.species}</Badge></h5>
-                            <br></br>
-                    </Jumbotron>  
-                </Container>
-                       
-                
-
+            <div className="Home">
+                <br></br>
+                <Button color="success" href="/Create">Crear Nuevo Heroe</Button>
+                <div className="row mt-4">
+                    {heroes}
+                </div>
             </div>
             
           );

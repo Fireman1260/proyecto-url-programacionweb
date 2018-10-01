@@ -96,7 +96,6 @@ class Edit  extends Component{
                             <Label  for="Especie" className="labelName">Species</Label>
                             <Input className="InputText" defaultValue={this.state.species} type="text" name="Species" id="Species" placeholder="Especie del Heroe" />
                         </FormGroup>
-
                     </Form>
 
                     <br>

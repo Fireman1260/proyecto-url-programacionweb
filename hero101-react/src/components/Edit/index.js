@@ -18,36 +18,33 @@ class Edit  extends Component{
                       hero_type: "",
                       alter_ego: "",
                       species: "",
-                      abilities: []};
+                      src: ""};
         
         
     }
 
     componentDidMount(){
         const values = queryString.parse(this.props.location.search)
-        var HeroList = JSON.parse(localStorage.getItem('Heroes'))
-        var editHero = this.obtainHero(values.id, HeroList);
-        if (editHero === undefined){
+        
+        var url = "http://localhost:3001/api/heroes/" + values.id
+        
+        fetch(url)
+        .then(res => res.json())
+        .catch(function(){
             window.location.href = "/404-Page";
-        }
+        })
+        .then(json => {
 
-        this.setState({id: editHero['id'],
-                       name: editHero['name'], 
-                        hero_type: editHero['hero_type'],
-                       alter_ego: editHero['alter_ego'],
-                       species: editHero['species'],
-                       abilities: editHero['abilities']
-                    })
-    }
-
-    obtainHero(id, HeroList){
-        id = parseInt(id, 10)
-        for(var i=0; i < HeroList.length; i++){
-            if(HeroList[i]['id'] === id){
-                return HeroList[i];
-            }
-        }
-        return undefined;
+            var editHero = json;
+            this.setState({
+                id: editHero['id'],
+                name: editHero['name'], 
+                hero_type: editHero['hero_type'],
+                alter_ego: editHero['alter_ego'],
+                species: editHero['species'],
+                src: editHero['src']
+            })
+        }) 
     }
 
     saveHero(id){
@@ -56,24 +53,32 @@ class Edit  extends Component{
         var hero_type = document.getElementById('Type').value;
         var alter_ego =  document.getElementById('Alter_Ego').value;
         var species = document.getElementById('Species').value;
+        var src = document.getElementById('Imagen').value;
 
-        var HeroList = JSON.parse(localStorage.getItem('Heroes'))
-        for(var i=0; i < HeroList.length; i++){
-            if(HeroList[i]['id'] === id){
-                HeroList[i]['name'] = name
-                HeroList[i]['hero_type'] = hero_type
-                HeroList[i]['alter_ego'] = alter_ego
-                HeroList[i]['species'] = species
-                break;
+        var newHero = {
+            name: name,
+            hero_type: hero_type,
+            alter_ego: alter_ego,
+            species: species,
+            src: src
             }
-        }
-        localStorage.setItem('Heroes', JSON.stringify(HeroList))
-        window.location.href = "/"
+
+            var url = "http://localhost:3001/api/heroes/" + id;
+            fetch(url, {
+                method: 'PUT', // or 'PUT'
+                body: JSON.stringify(newHero), // data can be `string` or {object}!
+                headers:{
+                  'Content-Type': 'application/json'
+                }
+              }).then(response => console.log('Success:', response));
+        
+         window.location.href = "/"
     }
 
 
     render(){
         const id = this.state.id
+        console.log(this.state.src)
 
         return(
             <div className="Edit">
@@ -95,6 +100,10 @@ class Edit  extends Component{
                         <FormGroup>
                             <Label  for="Especie" className="labelName">Species</Label>
                             <Input className="InputText" defaultValue={this.state.species} type="text" name="Species" id="Species" placeholder="Especie del Heroe" />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label  for="Imagen" className="labelName">Imagen</Label>
+                            <Input className="InputText" defaultValue={this.state.src} type="text" name="Imagen" id="Imagen" placeholder="Imagen del Heroe" />
                         </FormGroup>
                     </Form>
 

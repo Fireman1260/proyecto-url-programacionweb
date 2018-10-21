@@ -10,51 +10,35 @@ import './index.css'
 
 
 class Create extends Component{
-    constructor(props){
-        super(props);
-        this.state = {id: 0};
-    }
-
-    componentDidMount(){
-        var HeroList = JSON.parse(localStorage.getItem('Heroes'))
-        var heroID = this.obtainHero(HeroList);
-        console.log(heroID)
-        this.setState({id: heroID })
-    }
-
-    obtainHero(HeroList){
-        var newId = 0
-        for(var i=0; i < HeroList.length; i++){
-            if(HeroList[i]['id'] > newId){
-                newId = HeroList[i]['id']
-            }
-        }
-        newId += 1
-        return newId
-    }
+   
 
     saveHero(){
-        var id = this.state['id']
+       
         var name =  document.getElementById('Name').value;
         var hero_type = document.getElementById('Type').value;
         var alter_ego =  document.getElementById('Alter_Ego').value;
         var species = document.getElementById('Species').value;
         var src = document.getElementById('Imagen').value;
-        var HeroList = JSON.parse(localStorage.getItem('Heroes'))
+        
 
-        var newHero = {id: id,
-                        name: name,
+        var newHero = {name: name,
                         hero_type: hero_type,
                         alter_ego: alter_ego,
                         species: species,
                         src: src
                         }
+        
 
-        HeroList.push(newHero)
+        var url = "http://localhost:3001/api/heroes"
 
-        console.log(HeroList)
-
-        localStorage.setItem('Heroes', JSON.stringify(HeroList))
+        fetch(url, {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(newHero), // data can be `string` or {object}!
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          }).then(res => res.json())
+          .then(response => console.log('Success:', response));
         window.location.href = "/"
     }
 

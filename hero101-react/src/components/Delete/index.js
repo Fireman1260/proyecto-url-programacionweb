@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Container } from 'reactstrap';
+import { Button } from 'reactstrap';
 import queryString from 'query-string'
 
 class Delete  extends Component{
@@ -17,42 +17,34 @@ class Delete  extends Component{
 
     componentDidMount(){
         const values = queryString.parse(this.props.location.search)
-        var HeroList = JSON.parse(localStorage.getItem('Heroes'))
-        var editHero = this.obtainHero(values.id, HeroList);
-        if (editHero === undefined){
+        var url = "http://localhost:3001/api/heroes/" + values.id
+        
+        fetch(url)
+        .then(res => res.json())
+        .catch(function(){
             window.location.href = "/404-Page";
-        }
+        })
+        .then(json => {
 
-        this.setState({id: editHero['id'],
-                       name: editHero['name'], 
-                        hero_type: editHero['hero_type'],
-                       alter_ego: editHero['alter_ego'],
-                       species: editHero['species'],
-                       abilities: editHero['abilities']
-                    })
-    }
-
-    obtainHero(id, HeroList){
-        id = parseInt(id, 10)
-        for(var i=0; i < HeroList.length; i++){
-            if(HeroList[i]['id'] === id){
-                return HeroList[i];
-            }
-        }
-        return undefined;
+            var editHero = json;
+            this.setState({
+                id: editHero['id'],
+                name: editHero['name'], 
+                hero_type: editHero['hero_type'],
+                alter_ego: editHero['alter_ego'],
+                species: editHero['species'],
+                src: editHero['src']
+            })
+        }) 
     }
 
     killHero(id){
-        var HeroList = JSON.parse(localStorage.getItem('Heroes'))
-        var newHeroList = []
-        for(var i=0; i < HeroList.length; i++){
-            
-            if(HeroList[i]['id'] !== id){
-                newHeroList.push(HeroList[i])
-            }
-        }
-        localStorage.setItem('Heroes', JSON.stringify(newHeroList))
-        window.location.href = "/"
+        var url = "http://localhost:3001/api/heroes/" + id
+        
+        fetch(url, {method: 'delete'})
+        .then(res => res.json())
+
+         window.location.href = "/"
     }
 
     render(){

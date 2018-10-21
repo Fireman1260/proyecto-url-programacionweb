@@ -21,6 +21,7 @@ class Home  extends Component{
     }
 
     componentDidMount() {
+
         var heroes = []
 
         if (typeof localStorage["Heroes"] !== "undefined") {
@@ -42,6 +43,7 @@ class Home  extends Component{
             heroes = JSON.parse(localStorage.getItem("Heroes"));
         }
         this.setState({ heroList: heroes });         
+
       }
 
 
@@ -53,11 +55,14 @@ class Home  extends Component{
             var eliminar = "/Delete?id=" + hero.id;
             
             return(
+
                 <div className="col-md-6">
+
                     <div className="card mt-5">
                         <div className="card-header">
                             <h3>{hero.name}</h3>
                             <h4>
+
                                 <spam className="badge badge-pill badge-danger ml-2">
                                     {hero.hero_type}
                                 </spam>
@@ -65,13 +70,16 @@ class Home  extends Component{
                         </div>
                         <div className = "card-body">
                             <img src={hero.src}/>
+
                         </div>
                         <div className = "card-footer">
                             <h2>{hero.alter_ego}</h2>
                             
+
                             <spam className="badge badge-pill badge-primary ml-2">
                                 {hero.species}
                             </spam>
+
                             <br></br>
                             <br></br>
                             <Button color="primary" href={edit}>Editar</Button ><Button color="danger" href={eliminar}>Eliminar</Button>
